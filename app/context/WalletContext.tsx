@@ -1,210 +1,125 @@
 'use client';
 
 import React, { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react';
-import { connect, disconnect, type StarknetWindowObject } from '@starknet-io/get-starknet';
-import { AccountInterface, RpcProvider } from 'starknet';
-import { withRetry, getRpcUrl } from '@/app/lib/contract';
+import {
+    StellarWalletsKit,
+    WalletNetwork,
+    type ISupportedWallet,
+    FreighterModule,
+    LobstrModule,
+    AlbedoModule,
+    xBullModule,
+} from '@creit.tech/stellar-wallets-kit';
 
 interface WalletContextType {
     isConnected: boolean;
     walletAddress: string | null;
     connectWallet: (onConnected?: () => void) => Promise<void>;
     disconnectWallet: () => void;
-    account: AccountInterface | null;
-    network: 'mainnet' | 'sepolia';
-    switchNetwork: (newNetwork: 'mainnet' | 'sepolia') => void;
+    signTransaction: (xdr: string) => Promise<string>;
+    network: 'mainnet' | 'testnet';
+    switchNetwork: (newNetwork: 'mainnet' | 'testnet') => void;
 }
-
-// Type for wallet with additional properties
-type ExtendedStarknetWindow = StarknetWindowObject & {
-    isConnected?: boolean;
-    account?: AccountInterface;
-    selectedAddress?: string;
-    chainId?: string;
-    enable?: () => Promise<string[]>;
-};
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
+function networkToStellarNetwork(network: 'mainnet' | 'testnet'): WalletNetwork {
+    return network === 'mainnet'
+        ? WalletNetwork.PUBLIC
+        : WalletNetwork.TESTNET;
+}
+
+let kit: StellarWalletsKit | null = null;
+
+function getKit(network: 'mainnet' | 'testnet'): StellarWalletsKit {
+    if (!kit) {
+        kit = new StellarWalletsKit({
+            network: networkToStellarNetwork(network),
+            modules: [
+                new FreighterModule(),
+                new LobstrModule(),
+                new AlbedoModule(),
+                new xBullModule(),
+            ],
+        });
+    }
+    return kit;
+}
+
 export const WalletProvider = ({ children }: { children: ReactNode }) => {
-    const [account, setAccount] = useState<AccountInterface | null>(null);
     const [walletAddress, setWalletAddress] = useState<string | null>(null);
     const [isConnectedState, setIsConnectedState] = useState(false);
-    const [network, setNetwork] = useState<'mainnet' | 'sepolia'>('sepolia');
-
-    // Helper to map chain ID to network name
-    const getNetworkFromChainId = (chainId: string): 'mainnet' | 'sepolia' => {
-        if (chainId === 'SN_MAIN' || chainId === '0x534e5f4d41494e') return 'mainnet';
-        return 'sepolia'; // Default to sepolia
-    };
-
-    // Create AccountInterface from wallet
-    const createAccountFromWallet = useCallback(async (wallet: ExtendedStarknetWindow): Promise<AccountInterface | null> => {
-        // Check if wallet has enable method
-        if (typeof wallet.enable === 'function') {
-            await wallet.enable();
-        }
-
-        // Modern wallets populate account after enable
-        if (wallet.account) {
-            // Override the provider with retry logic
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (wallet.account as any).provider = await withRetry(async () => {
-                // Use wallet's current chain if available, otherwise fallback to UI setting
-                const currentNetwork = wallet.chainId ? getNetworkFromChainId(wallet.chainId) : network;
-                return new RpcProvider({
-                    nodeUrl: getRpcUrl(currentNetwork),
-                });
-            });
-            return wallet.account;
-        }
-
-        return null;
-    }, [network]); // Dependencies kept but logic inside is more cautious
+    const [network, setNetwork] = useState<'mainnet' | 'testnet'>('testnet');
+    const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
 
     useEffect(() => {
         const checkConnection = async () => {
-            // Only attempt silent reconnect if user previously connected
-            if (localStorage.getItem('starknet_connected') !== 'true') return;
+            if (localStorage.getItem('stellar_connected') !== 'true') return;
 
             try {
-                // Eagerly connect without showing modal
-                const wallet = await connect({
-                    modalMode: 'neverAsk',
-                    // 'include' is not necessary for eager connection if we just want the active wallet
-                }) as ExtendedStarknetWindow;
-
-                if (!wallet) {
-                    // Try one more time with specific inclusions just in case
-                    const retryWallet = await connect({
-                        modalMode: 'neverAsk',
-                        include: ['argentX', 'braavos', 'xverse']
-                    }) as ExtendedStarknetWindow;
-                    
-                    if (!retryWallet) {
-                         localStorage.removeItem('starknet_connected'); // Clean up if definitely no wallet
-                         return;
-                    }
+                const result = await getKit(network).getAddress();
+                if (result?.address) {
+                    setWalletAddress(result.address);
+                    setIsConnectedState(true);
                 }
-
-                const activeWallet = wallet || await connect({ modalMode: 'neverAsk', include: ['argentX', 'braavos', 'xverse'] }) as ExtendedStarknetWindow;
-
-                if (activeWallet) {
-                    // Rapidly restore address for UI rendering
-                    if (activeWallet.selectedAddress) {
-                        setWalletAddress(activeWallet.selectedAddress);
-                        setIsConnectedState(true);
-                    }
-
-                    // Initial network detection from wallet
-                    if (activeWallet.chainId) {
-                        const detectedNetwork = getNetworkFromChainId(activeWallet.chainId);
-                        console.log(`Initial network sync: ${detectedNetwork}`);
-                        setNetwork(detectedNetwork);
-                    }
-
-                    // Then try to fully restore the account object
-                    const walletAccount = await createAccountFromWallet(activeWallet);
-
-                    if (walletAccount) {
-                        setAccount(walletAccount);
-                        setWalletAddress(walletAccount.address || activeWallet.selectedAddress || null);
-                        setIsConnectedState(true);
-                    }
-
-                    // Listen for network changes in the wallet
-                    if (activeWallet.on) {
-                        activeWallet.on('networkChanged', (chainId?: string) => {
-                            if (chainId) {
-                                const newNetwork = getNetworkFromChainId(chainId);
-                                console.log('Wallet triggered network change:', newNetwork);
-                                setNetwork(newNetwork);
-                            }
-                        });
-                    }
-                }
-            } catch (error) {
-                console.log('Error checking wallet connection:', error);
+            } catch {
+                localStorage.removeItem('stellar_connected');
             }
         };
 
         checkConnection();
-    }, [createAccountFromWallet]);
+    }, [network]);
 
     const connectWallet = useCallback(async (onConnected?: () => void) => {
         try {
-            const wallet = await connect({
-                modalMode: 'alwaysAsk',
-                include: ['argentX', 'braavos', 'xverse']
+            await getKit(network).openModal({
+                onWalletSelected: async (wallet: ISupportedWallet) => {
+                    setSelectedWalletId(wallet.id);
+                    getKit(network).setWallet(wallet.id);
+                    const result = await getKit(network).getAddress();
+                    setWalletAddress(result.address);
+                    setIsConnectedState(true);
+                    localStorage.setItem('stellar_connected', 'true');
+                    if (onConnected) onConnected();
+                },
             });
-
-            if (!wallet) {
-                throw new Error('No wallet selected');
-            }
-
-            const walletExtended = wallet as ExtendedStarknetWindow;
-
-            // Sync network on first manual connection
-            if (walletExtended.chainId) {
-                setNetwork(getNetworkFromChainId(walletExtended.chainId));
-            }
-
-            const walletAccount = await createAccountFromWallet(walletExtended);
-
-            if (walletAccount) {
-                setAccount(walletAccount);
-                setWalletAddress(walletAccount.address || walletExtended.selectedAddress || null);
-                setIsConnectedState(true);
-                localStorage.setItem('starknet_connected', 'true');
-            } else if (walletExtended.selectedAddress) {
-                setWalletAddress(walletExtended.selectedAddress);
-                setIsConnectedState(true);
-                localStorage.setItem('starknet_connected', 'true');
-            } else {
-                throw new Error('Failed to get wallet address');
-            }
-
-            // Set up listener for subsequent changes
-            if (walletExtended.on) {
-                walletExtended.on('networkChanged', (chainId?: string) => {
-                    if (chainId) {
-                        setNetwork(getNetworkFromChainId(chainId));
-                    }
-                });
-            }
-
-            if (onConnected) {
-                onConnected();
-            }
         } catch (error) {
             console.error('Failed to connect wallet:', error);
             throw error;
         }
-    }, [createAccountFromWallet]);
+    }, [network]);
 
     const disconnectWallet = useCallback(async () => {
         try {
-            await disconnect();
-            setAccount(null);
+            if (selectedWalletId) {
+                await getKit(network).disconnect();
+            }
             setWalletAddress(null);
             setIsConnectedState(false);
-            localStorage.removeItem('starknet_connected');
+            setSelectedWalletId(null);
+            localStorage.removeItem('stellar_connected');
         } catch (error) {
             console.error('Failed to disconnect wallet:', error);
         }
-    }, []);
+    }, [selectedWalletId, network]);
 
-    const switchNetwork = useCallback((newNetwork: 'mainnet' | 'sepolia') => {
+    const signTransaction = useCallback(async (xdr: string): Promise<string> => {
+        if (!selectedWalletId) throw new Error('No wallet connected');
+        const result = await getKit(network).signTransaction(xdr, {
+            networkPassphrase: networkToStellarNetwork(network),
+        });
+        return result.signedTxXdr;
+    }, [selectedWalletId, network]);
+
+    const switchNetwork = useCallback((newNetwork: 'mainnet' | 'testnet') => {
         setNetwork(newNetwork);
-        // In a more robust implementation, we might want to reload the page or 
-        // re-initialize the provider here. For balance tracking, updating state is enough.
     }, []);
 
     const isConnected = isConnectedState || !!walletAddress;
 
     return (
         <WalletContext.Provider
-            value={{ isConnected, walletAddress, connectWallet, disconnectWallet, account, network, switchNetwork }}
+            value={{ isConnected, walletAddress, connectWallet, disconnectWallet, signTransaction, network, switchNetwork }}
         >
             {children}
         </WalletContext.Provider>

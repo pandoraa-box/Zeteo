@@ -1,61 +1,134 @@
 # Zeteo
 
-Starknet users currently juggle fragmented and risky tools for portfolio tracking, airdrop claims, and bridging. Zeteo unifies the entire lifecycle into a single, privacy-first dashboard powered by ZK-proofs, our custom Bitcoin bridge, and on-chain intelligence subscriptions.
+> The privacy-first Stellar dashboard for portfolio tracking, DEX swaps, and ZK-powered airdrop claims.
 
-## The Problem
-Navigating the Starknet ecosystem today is fragmented and risky. Users juggle multiple tools to track portfolios, hunt for airdrops, and bridge assets often exposing sensitive wallet data on-chain in the process. There is no unified, privacy-first platform that lets users manage their entire Starknet lifecycle in one place.
-
-## How Zeteo Solves It
-- **Unified Dashboard**: A real-time portfolio manager lets users monitor token balances and values across their Starknet wallets (Argent X & Braavos) in a single, sleek interface.
-- **Privacy-Preserving Airdrop Claims (ZK-Privacy Mode)**: Zeteo integrates Garaga-powered Zero-Knowledge proofs so users can verify airdrop eligibility and claim allocations without revealing their wallet data on-chain. This is a first-of-its-kind privacy layer for airdrop distribution on Starknet.
-- **Bitcoin Bridge via Zeteo Bridge**: Zeteo integrates the Zeteo Bridge directly into the platform, allowing users to bridge BTC assets into Starknet.
-- **On-Chain Subscription System**: A Cairo smart contract manages tiered subscription plans (Basic, Standard, Premium) entirely on-chain. Subscriptions are additive, upgrading mid-cycle rolls remaining time into the new tier. Pricing integrates with Pragma Oracle for real-time ETH/USD conversion.
-- **Airdrop Intelligence**: A curated, real-time tracker surfaces the most valuable airdrops on Starknet and other L2s, with priority notifications and advanced analytics for premium subscribers.
-
-## Tech Stack
-- **Frontend**: Next.js 16 (App Router) + React 19, styled with Tailwind CSS 4 and Framer Motion animations
-- **Smart Contracts**: Cairo (Starknet), featuring subscription management, ZK-proof verification via Garaga, and Pragma Oracle integration
-- **Bridge**: Zeteo Bridge (Our own platform bridge for Bitcoin assets)
-- **Backend Services**: Next.js API Routes + Redis caching (24-hour TTL) + background worker service for data sync
-- **Blockchain**: Starknet.js for on-chain interaction
-
-## Why It Matters
-Zeteo redefines how users interact with Starknet by combining portfolio management, privacy-first airdrop claims, Zeteo-powered Bitcoin bridging, and on-chain subscriptions into a single, beautifully designed platform proving that decentralized tools can be both powerful and accessible.
-
-Looking ahead, we aim to expand Zeteo into a cross-chain intelligence hub extending beyond Starknet to cover all major L2s, integrating deeper with DeFi protocols, and building a community-driven airdrop discovery engine powered by on-chain analytics. The goal is simple: if there's value in the ecosystem, Zeteo helps you find it privately, efficiently, and beautifully.
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev/)
+[![Stellar](https://img.shields.io/badge/Stellar-Soroban-blue?logo=stellar)](https://stellar.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 ---
+
+## Overview
+
+Stellar users currently juggle fragmented tools for portfolio tracking, airdrop claims, and asset swapping. Zeteo unifies the entire lifecycle into a single, privacy-first dashboard powered by ZK-proofs, the Stellar DEX, and on-chain intelligence subscriptions.
+
+## Features
+
+- **Unified Portfolio** — Real-time tracking of XLM, USDC, and other Stellar assets across your wallets
+- **Stellar DEX Swaps** — Swap assets directly on-chain with best-path routing and near-zero fees
+- **ZK-Privacy Claims** — Claim airdrops anonymously using Soroban-powered zero-knowledge proofs
+- **Airdrop Tracker** — Curated, real-time feed of the most valuable airdrops on Stellar
+- **On-Chain Subscriptions** — Tiered plans (Basic, Standard, Premium) managed entirely via Soroban smart contracts
+- **Multi-Wallet Support** — Connect with Freighter, Lobstr, Albedo, or xBull
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | Next.js 16, React 19, Tailwind CSS 4, Framer Motion |
+| Smart Contracts | Rust / Soroban |
+| Blockchain SDK | `@stellar/stellar-sdk`, `@creit.tech/stellar-wallets-kit` |
+| Backend | Next.js API Routes, Redis (24h TTL) |
+| Worker | Node.js background service for airdrop data sync |
 
 ## Getting Started
 
 ### Prerequisites
-- **Node.js**: v20 or higher
-- **Package Manager**: `npm` or `yarn`
-- **Redis**: A running Redis instance for data caching
-- **Starknet Wallet**: [Argent X](https://www.argent.xyz/argent-x/) or [Braavos](https://braavos.app/) browser extension
+
+- [Node.js](https://nodejs.org/) v20+
+- [pnpm](https://pnpm.io/) v9+
+- [Redis](https://redis.io/) (for caching)
+- A Stellar wallet ([Freighter](https://freighter.app/), [Lobstr](https://lobstr.co/), or [Albedo](https://albedo.link/))
 
 ### Installation
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/bashir1738/Zeteo.git
-   cd Zeteo
-   ```
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-3. **Set up Environment Variables**:
-   Create a `.env.local` file in the root directory and add your configuration.
-4. **Run the development server**:
-   ```bash
-   npm run dev
-   ```
+
+```bash
+# Clone the repo
+git clone https://github.com/your-org/zeteo.git
+cd zeteo
+
+# Install dependencies
+pnpm install
+
+# Copy environment variables
+cp .env.example .env.local
+
+# Start the dev server
+pnpm dev
+```
+
+The app will be available at [http://localhost:3000](http://localhost:3000).
+
+### Environment Variables
+
+Create a `.env.local` file in the project root:
+
+```env
+NEXT_PUBLIC_STELLAR_NETWORK=testnet
+NEXT_PUBLIC_CONTRACT_ADDRESS=<your-soroban-contract-id>
+NEXT_PUBLIC_STELLAR_RPC_URL=https://soroban-testnet.stellar.org
+```
 
 ## Project Structure
-```text
-├── app/              # Next.js App Router (Pages, Components, API, Context)
-├── contracts/        # Starknet Smart Contracts (Cairo)
-├── public/           # Static assets (Images, Videos)
-├── worker/           # Background worker service
-└── package.json      # Project dependencies and scripts
+
 ```
+zeteo/
+├── app/
+│   ├── components/       # Reusable React components
+│   ├── context/          # Wallet context provider
+│   ├── lib/              # Utilities (tokens, balances, contract)
+│   ├── api/              # API routes (airdrop data, prices)
+│   ├── docs/             # Documentation page
+│   └── portfolio/        # Portfolio dashboard page
+├── contracts/
+│   └── src/              # Soroban smart contracts (Rust)
+├── worker/               # Background worker for airdrop sync
+├── public/               # Static assets
+├── deploy.ts             # Contract deployment script
+├── CONTRIBUTING.md       # Contribution guidelines
+└── package.json
+```
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start the development server |
+| `pnpm build` | Build for production |
+| `pnpm start` | Start the production server |
+| `pnpm lint` | Run ESLint |
+| `npx tsc --noEmit` | Type-check without emitting |
+
+## Smart Contracts
+
+The Soroban subscription contract lives in `contracts/src/`. It manages tiered subscriptions with additive upgrades.
+
+```bash
+# Build
+stellar contract build
+
+# Test
+cargo test
+
+# Deploy to testnet
+stellar contract deploy \
+  --wasm target/wasm32-unknown-unknown/release/zeteo.wasm \
+  --source deployer \
+  --network testnet
+```
+
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+
+## Acknowledgments
+
+- [Stellar Development Foundation](https://stellar.org/) for the Soroban platform
+- [Freighter](https://freighter.app/) for the wallet SDK
+- [Creit Technologies](https://creit.tech/) for the Stellar Wallets Kit

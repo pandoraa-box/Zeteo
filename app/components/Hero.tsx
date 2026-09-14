@@ -45,7 +45,7 @@ const Hero = () => {
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-purple-500"></span>
                     </span>
-                    Privacy-First ZK Airdrops
+                    Privacy-First ZK Airdrops on Stellar
                 </motion.div>
 
                 <motion.h1
@@ -66,7 +66,7 @@ const Hero = () => {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.5, duration: 0.8 }}
                 >
-                    The ultimate cross-chain platform to track allocations, secure <span className="text-white font-medium">private claims via Garaga</span>, and discover high-value airdrops across Starknet, zkSync, and beyond.
+                    The ultimate Stellar dashboard to track allocations, secure <span className="text-white font-medium">private claims via Soroban</span>, and discover high-value airdrops across the Stellar ecosystem.
                 </motion.p>
 
                 <motion.div

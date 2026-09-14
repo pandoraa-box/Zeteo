@@ -1,7 +1,7 @@
 # Redis Schema Definition
 
 ## Key Format
-`user:{starknet_address}:data`
+`user:{stellar_address}:data`
 
 ## Value Structure (JSON)
 The value is a JSON string with a Time-To-Live (TTL) of 24 hours.
@@ -13,14 +13,14 @@ The value is a JSON string with a Time-To-Live (TTL) of 24 hours.
   "expiry": 1709251200, 
   "airdrops": [
     {
-      "name": "Starknet Early Adopter",
-      "url": "https://starknet.io/claim",
-      "amount": "500 STRK"
+      "name": "Stellar Ecosystem Fund",
+      "url": "https://stellar.org/claim",
+      "amount": "500 XLM"
     },
     {
-      "name": "Optimism Drop #1",
-      "url": "https://optimism.io/airdrop",
-      "amount": "200 OP"
+      "name": "Soroban dApp Grant",
+      "url": "https://soroban.stellar.org",
+      "amount": "100 XLM"
     }
   ],
   "last_updated": 1708646400
@@ -31,7 +31,7 @@ The value is a JSON string with a Time-To-Live (TTL) of 24 hours.
 - **status**: `active_subscription` | `expired` | `no_subscription`
 - **tier**: Subscription tier level (1, 2, 3)
 - **expiry**: Unix timestamp of subscription expiry
-- **airdrops**: List of eligible aidrops
+- **airdrops**: List of eligible airdrops
     - **name**: Name of the airdrop
     - **url**: Claim URL (Filtered against `ALLOWED_DOMAINS`)
     - **amount**: Estimated amount

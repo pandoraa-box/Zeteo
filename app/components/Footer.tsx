@@ -11,7 +11,7 @@ const Footer = () => {
             <div className="relative z-10 flex flex-col items-center gap-6 w-full max-w-7xl px-4">
                 <div className="flex items-center gap-6 border-b border-white/5 pb-6 w-full max-w-xs justify-center">
                     <a
-                        href="https://x.com/Zeteo_starknet"
+                        href="https://x.com/Zeteo_stellar"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-gray-400 hover:text-white transition-all transform hover:scale-110"

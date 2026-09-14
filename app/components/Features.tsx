@@ -8,13 +8,13 @@ import BackgroundAnimation from './BackgroundAnimation';
 const features = [
     {
         title: 'Wallet Integration',
-        description: 'Connect seamlessly with Argent X or Braavos wallets. Your keys, your assets, fully decentralized.',
+        description: 'Connect seamlessly with Freighter, Lobstr, or Albedo wallets. Your keys, your assets, fully decentralized.',
         icon: Wallet,
         color: 'text-blue-500',
     },
     {
         title: 'Airdrop Tracker',
-        description: 'Stay ahead of the curve with our real-time tracker for the most lucrative airdrops on Starknet and other L2s.',
+        description: 'Stay ahead of the curve with our real-time tracker for the most lucrative airdrops on the Stellar network.',
         icon: Search,
         color: 'text-purple-500',
     },
@@ -32,15 +32,15 @@ const features = [
     },
     {
         title: 'ZK-Privacy Claims',
-        description: 'Leverage Garaga-powered ZK-proofs to claim allocations anonymously and protect your data.',
+        description: 'Leverage Soroban-powered ZK-proofs to claim allocations anonymously and protect your data.',
         icon: Lock,
         color: 'text-red-500',
     },
     {
-        title: 'Bitcoin Bridge',
-        description: 'Trustlessly move your Bitcoin assets into Starknet to maximize your yield and participation.',
+        title: 'Instant DEX Swaps',
+        description: 'Swap assets directly on the Stellar Decentralized Exchange with sub-second settlement and near-zero fees.',
         icon: Repeat,
-        color: 'text-yellow-500',
+        color: 'text-cyan-500',
     },
 ];
 
@@ -63,7 +63,7 @@ const Features = () => {
                         Engineered for <span className="text-purple-500">Excellence</span>
                     </h2>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto font-light">
-                        Zeteo provides the tools you need to navigate the Starknet ecosystem with confidence and style.
+                        Zeteo provides the tools you need to navigate the Stellar ecosystem with confidence and style.
                     </p>
                 </motion.div>
 

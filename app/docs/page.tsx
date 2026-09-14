@@ -20,7 +20,7 @@ const sections = [
                             <CheckCircle2 className="w-4 h-4 text-green-400" />
                             Wallet Connection
                         </h4>
-                        <p className="text-sm">Securely connect your Starknet or Ethereum wallet to track your specific allocations.</p>
+                        <p className="text-sm">Securely connect your Stellar wallet to track your specific allocations.</p>
                     </div>
                     <div className="p-4 rounded-xl bg-white/5 border border-white/10">
                         <h4 className="text-white font-medium mb-2 flex items-center gap-2">
@@ -81,30 +81,30 @@ const sections = [
         ),
     },
     {
-        id: 'bitcoin-bridge',
-        title: 'Bitcoin Bridge',
-        icon: <Repeat className="w-6 h-6 text-yellow-500" />,
+        id: 'dex-swap',
+        title: 'Stellar DEX Swap',
+        icon: <Repeat className="w-6 h-6 text-cyan-500" />,
         content: (
             <div className="space-y-4 text-gray-400 font-light">
-                <p>Zeteo provides a seamless, trustless gateway to bring your Bitcoin assets into the Starknet ecosystem.</p>
+                <p>Zeteo integrates directly with the Stellar Decentralized Exchange, allowing you to swap assets natively on-chain.</p>
                 <div className="bg-[#0a0a0a] border border-white/5 rounded-xl p-5 space-y-4">
                     <div className="flex gap-4">
-                        <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center shrink-0">
-                            <span className="text-yellow-500 font-bold text-xs">1</span>
+                        <div className="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center shrink-0">
+                            <span className="text-cyan-500 font-bold text-xs">1</span>
                         </div>
-                        <p className="text-sm">Initiate a bridging request from any Bitcoin wallet.</p>
+                        <p className="text-sm">Select the asset you want to swap from and the asset you want to receive.</p>
                     </div>
                     <div className="flex gap-4">
-                        <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center shrink-0">
-                            <span className="text-yellow-500 font-bold text-xs">2</span>
+                        <div className="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center shrink-0">
+                            <span className="text-cyan-500 font-bold text-xs">2</span>
                         </div>
-                        <p className="text-sm">Verify the transaction on-chain via our decentralized verifier network.</p>
+                        <p className="text-sm">Zeteo finds the best swap route across the Stellar orderbook and liquidity pools.</p>
                     </div>
                     <div className="flex gap-4">
-                        <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center shrink-0">
-                            <span className="text-yellow-500 font-bold text-xs">3</span>
+                        <div className="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center shrink-0">
+                            <span className="text-cyan-500 font-bold text-xs">3</span>
                         </div>
-                        <p className="text-sm">Receive wrapped BTC on Starknet, ready for liquidity provision or airdrop eligibility.</p>
+                        <p className="text-sm">Sign the transaction with your wallet. Settlement happens in ~5 seconds with near-zero fees.</p>
                     </div>
                 </div>
             </div>
@@ -112,11 +112,11 @@ const sections = [
     },
     {
         id: 'zk-privacy',
-        title: 'ZK-Privacy (Garaga)',
+        title: 'ZK-Privacy (Soroban)',
         icon: <Lock className="w-6 h-6 text-red-400" />,
         content: (
             <div className="space-y-4 text-gray-400 font-light">
-                <p>Security and privacy are core to Zeteo. Our integration with <strong>Garaga</strong> enables zero-knowledge verification for airdrop claims.</p>
+                <p>Security and privacy are core to Zeteo. Our integration with <strong>Soroban</strong> enables zero-knowledge verification for airdrop claims.</p>
                 <ul className="space-y-3">
                     <li className="flex gap-3">
                         <CheckCircle2 className="w-5 h-5 text-purple-400 shrink-0 mt-0.5" />
@@ -140,7 +140,7 @@ const sections = [
         icon: <TrendingUp className="w-6 h-6 text-green-400" />,
         content: (
             <div className="space-y-4 text-gray-400 font-light">
-                <p>Track your entire Starknet wealth with our high-fidelity portfolio tracking system.</p>
+                <p>Track your entire Stellar wealth with our high-fidelity portfolio tracking system.</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-4 rounded-xl bg-white/5 border border-white/10">
                         <h4 className="text-white font-medium mb-1">Real-time Valuation</h4>
@@ -164,11 +164,11 @@ const sections = [
                 <div className="space-y-4">
                     <div className="p-4 rounded-xl bg-white/5 border border-white/10">
                         <h4 className="text-white font-medium mb-1">&quot;Failed to determine starting block&quot;</h4>
-                        <p className="text-xs">This error (often `SIMULATE_AND_REVIEW_FAILED`) typically indicates a connectivity issue with the Starknet RPC provider. Check your network connection and verify your `NEXT_PUBLIC_STARKNET_RPC_URL` in `.env.local`.</p>
+                        <p className="text-xs">This error typically indicates a connectivity issue with the Stellar Horizon server. Check your network connection and verify your `NEXT_PUBLIC_STELLAR_RPC_URL` in `.env.local`.</p>
                     </div>
                     <div className="p-4 rounded-xl bg-white/5 border border-white/10">
                         <h4 className="text-white font-medium mb-1">Wallet Connection Failed</h4>
-                        <p className="text-xs">Ensure you have Argent X or Braavos installed and set to the correct network (Sepolia/Mainnet) matching the Zeteo configuration.</p>
+                        <p className="text-xs">Ensure you have Freighter, Lobstr, or Albedo installed and set to the correct network (Testnet/Mainnet) matching the Zeteo configuration.</p>
                     </div>
                 </div>
             </div>

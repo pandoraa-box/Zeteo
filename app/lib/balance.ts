@@ -1,36 +1,19 @@
-import { Contract, RpcProvider, uint256 } from 'starknet';
-import { withRetry, getRpcUrl } from './contract';
+import { Horizon } from '@stellar/stellar-sdk';
+import { getHorizonUrl, withRetry } from './contract';
 import { Token, Network } from './tokens';
-
-const ERC20_ABI = [
-    {
-        name: 'balanceOf',
-        type: 'function',
-        inputs: [{ name: 'account', type: 'core::starknet::contract_address::ContractAddress' }],
-        outputs: [{ name: 'balance', type: 'core::integer::u256' }],
-        state_mutability: 'view',
-    },
-    {
-        name: 'decimals',
-        type: 'function',
-        inputs: [],
-        outputs: [{ name: 'decimals', type: 'core::integer::u8' }],
-        state_mutability: 'view',
-    }
-];
 
 export async function fetchTokenBalances(
     accountAddress: string,
     tokens: Token[],
     network: Network
 ) {
-    const provider = new RpcProvider({ nodeUrl: getRpcUrl(network) });
+    const server = new Horizon.Server(getHorizonUrl(network));
 
-    // Map symbols to CoinGecko IDs
     const cgIds: Record<string, string> = {
-        'ETH': 'ethereum',
-        'STRK': 'starknet',
+        'XLM': 'stellar',
         'USDC': 'usd-coin',
+        'BTC': 'wrapped-bitcoin',
+        'ETH': 'ethereum',
         'USDT': 'tether',
         'DAI': 'dai',
         'WBTC': 'wrapped-bitcoin'
@@ -41,7 +24,6 @@ export async function fetchTokenBalances(
 
     if (ids) {
         try {
-            // Use the server-side proxy to avoid CORS restrictions on CoinGecko's free API
             const response = await fetch(`/api/prices?ids=${ids}&vs_currencies=usd&include_24hr_change=true`);
             if (response.ok) {
                 prices = await response.json();
@@ -51,48 +33,48 @@ export async function fetchTokenBalances(
         }
     }
 
+    let accountData: Horizon.AccountResponse | null = null;
+    try {
+        accountData = await withRetry(async () => {
+            return await server.loadAccount(accountAddress);
+        });
+    } catch (error) {
+        console.error('Failed to load account:', error);
+    }
+
     const balancePromises = tokens.map(async (token) => {
-        const nodeUrl = getRpcUrl(network);
         try {
-            console.log(`Fetching balance for ${token.symbol} at ${token.address} on ${nodeUrl}`);
-            const contract = new Contract({
-                abi: ERC20_ABI,
-                address: token.address,
-                providerOrAccount: provider
-            });
-            const result = await withRetry(async () => {
-                return await contract.call('balanceOf', [accountAddress]);
-            });
+            let balance = '0';
 
-            // Handle both old and new Cairo u256 formats
-            // starknet.js returns an object with named properties if they exist in ABI
-            // @ts-expect-error - result.balance could be u256 object or bigint
-            const rawBalance = result.balance !== undefined ? result.balance : result;
-
-            const balanceBigInt = typeof rawBalance === 'bigint' ? rawBalance : uint256.uint256ToBN(rawBalance);
-            const formattedBalance = Number(balanceBigInt) / Math.pow(10, token.decimals);
+            if (token.isNative && accountData) {
+                const nativeBalance = accountData.balances.find(
+                    b => b.asset_type === 'native'
+                );
+                balance = nativeBalance ? nativeBalance.balance : '0';
+            } else if (!token.isNative && accountData && token.issuer) {
+                const tokenBalance = accountData.balances.find((b) => {
+                    if (b.asset_type === 'native') return false;
+                    return b.asset_type !== 'liquidity_pool_shares' &&
+                        'asset_code' in b &&
+                        b.asset_code === token.assetCode &&
+                        'asset_issuer' in b &&
+                        b.asset_issuer === token.issuer;
+                });
+                balance = tokenBalance ? tokenBalance.balance : '0';
+            }
 
             const cgId = cgIds[token.symbol];
             const priceData = cgId ? prices[cgId] : null;
 
             return {
                 ...token,
-                balance: formattedBalance.toString(),
+                balance,
                 price: priceData?.usd || 0,
                 change24h: priceData?.usd_24h_change || 0
             };
         } catch (error: unknown) {
-            const { message, code } = error as { message?: string; code?: number };
-            const errorMessage = message || String(error) || '';
-            const isContractNotFound = errorMessage.includes('Contract not found') ||
-                (code === 20) ||
-                (code === -32603 && errorMessage.includes('20'));
-
-            if (isContractNotFound) {
-                console.warn(`Token ${token.symbol} not found on ${network}. Skipping.`);
-            } else {
-                console.error(`Error fetching balance for ${token.symbol} (${token.address}) on ${nodeUrl}:`, errorMessage);
-            }
+            const errorMessage = (error as { message?: string })?.message || String(error);
+            console.error(`Error fetching balance for ${token.symbol}:`, errorMessage);
 
             return {
                 ...token,

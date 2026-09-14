@@ -8,15 +8,15 @@ import BackgroundAnimation from './BackgroundAnimation';
 const faqs = [
     {
         question: 'What is Zeteo?',
-        answer: 'Zeteo is a premium dashboard built on the Starknet ecosystem. It helps users manage their digital assets, track eligible airdrops, and stay updated with the latest projects in a single, beautiful interface.',
+        answer: 'Zeteo is a premium dashboard built on the Stellar ecosystem. It helps users manage their digital assets, track eligible airdrops, and stay updated with the latest projects in a single, beautiful interface.',
     },
     {
         question: 'How do I connect my wallet?',
-        answer: 'You can connect your Starknet wallet (Argent X or Braavos) by clicking the "Connect Wallet" button in the navigation bar. This secure connection allows us to display your portfolio and track your airdrop eligibility.',
+        answer: 'You can connect your Stellar wallet (Freighter, Lobstr, or Albedo) by clicking the "Connect Wallet" button in the navigation bar. This secure connection allows us to display your portfolio and track your airdrop eligibility.',
     },
     {
         question: 'Is Zeteo safe to use?',
-        answer: 'Yes. Zeteo works by reading public blockchain data based on your wallet address. We never ask for your private keys or seed phrase. Transactions for subscriptions are handled through standard Starknet wallet protocols.',
+        answer: 'Yes. Zeteo works by reading public blockchain data based on your wallet address. We never ask for your private keys or seed phrase. Transactions for subscriptions are handled through standard Stellar wallet protocols.',
     },
     {
         question: 'What are the subscription tiers?',
@@ -27,12 +27,12 @@ const faqs = [
         answer: 'Absolutely! You can upgrade your plan at any time. Our smart contracts will automatically calculate the remaining time on your current plan and apply it towards your new tier.',
     },
     {
-        question: 'How does the Bitcoin Bridge work?',
-        answer: 'Zeteo integrates a trustless bridge that allows you to move Bitcoin assets into the Starknet ecosystem. This enables you to use your BTC holdings with Starknet dApps and protocols while maintaining security.',
+        question: 'What is ZK-Privacy Mode?',
+        answer: 'ZK-Privacy Mode uses Soroban-powered Zero-Knowledge proofs to verify your airdrop eligibility without revealing your specific wallet data on-chain. This ensures your financial privacy remains intact during the claim process.',
     },
     {
-        question: 'What is ZK-Privacy Mode?',
-        answer: 'ZK-Privacy Mode uses Garaga-powered Zero-Knowledge proofs to verify your airdrop eligibility without revealing your specific wallet data on-chain. This ensures your financial privacy remains intact during the claim process.',
+        question: 'What wallets are supported?',
+        answer: 'Zeteo supports all major Stellar wallets including Freighter (browser extension), Lobstr (mobile & web), and Albedo (web-based). Simply click "Connect Wallet" and select your preferred option.',
     },
 ];
 

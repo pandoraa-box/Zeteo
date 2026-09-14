@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useWallet } from '@/app/context/WalletContext';
-import { ShieldAlert, TrendingUp, TrendingDown, Wallet, ArrowUpRight, RefreshCw, Globe, FlaskConical, Bitcoin } from 'lucide-react';
+import { ShieldAlert, TrendingUp, TrendingDown, Wallet, ArrowUpRight, RefreshCw, Globe, FlaskConical, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { TOKENS, Token } from '@/app/lib/tokens';
 import { fetchTokenBalances } from '@/app/lib/balance';
-import BitcoinBridge from '@/app/components/BitcoinBridge';
+import StellarSwap from '@/app/components/StellarSwap';
 
 const SafeTokenIcon = ({ src, symbol }: { src: string; symbol: string }) => {
     const [error, setError] = useState(false);
@@ -33,7 +33,7 @@ export default function Portfolio() {
     const [isLoading, setIsLoading] = useState(false);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
     // Use LOCAL state for the network view — not bound to WalletContext so user can freely switch
-    const [viewNetwork, setViewNetwork] = useState<'mainnet' | 'sepolia'>(walletNetwork);
+    const [viewNetwork, setViewNetwork] = useState<'mainnet' | 'testnet'>(walletNetwork);
 
     const loadBalances = useCallback(async () => {
         if (!walletAddress) return;
@@ -61,8 +61,6 @@ export default function Portfolio() {
 
     // Calculate total value
     const totalValue = assets.reduce((acc, asset) => acc + (parseFloat(asset.balance) * asset.price), 0);
-    const btcAsset = assets.find(a => a.symbol === 'WBTC');
-    const btcValue = btcAsset ? (parseFloat(btcAsset.balance) * btcAsset.price) : 0;
 
     const filteredAssets = assets.filter(asset =>
         asset.name.toLowerCase().includes(filter.toLowerCase()) ||
@@ -123,19 +121,19 @@ export default function Portfolio() {
                     </div>
                 </div>
 
-                {/* BTC Net Worth Card */}
-                <div className="md:col-span-1 bg-linear-to-br from-orange-900/40 to-black border border-white/10 rounded-2xl p-6 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+                {/* DEX Swap Card */}
+                <div className="md:col-span-1 bg-linear-to-br from-cyan-900/40 to-black border border-white/10 rounded-2xl p-6 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
                     <div className="relative z-10">
-                        <div className="flex items-center gap-2 text-orange-400 mb-2">
-                            <Bitcoin className="w-5 h-5" />
-                            <span className="text-sm font-medium uppercase tracking-wider">BTC Net Worth</span>
+                        <div className="flex items-center gap-2 text-cyan-400 mb-2">
+                            <Zap className="w-5 h-5" />
+                            <span className="text-sm font-medium uppercase tracking-wider">DEX Swap</span>
                         </div>
                         <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                            ${btcValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            {filteredAssets.length > 0 ? `${filteredAssets.length} Assets` : '—'}
                         </h1>
                         <div className="flex items-center gap-2">
-                            <span className="text-orange-500/80 text-xs font-bold uppercase tracking-tighter">Bitcoin Track Active</span>
+                            <span className="text-cyan-500/80 text-xs font-bold uppercase tracking-tighter">Stellar DEX Active</span>
                         </div>
                     </div>
                 </div>
@@ -182,14 +180,14 @@ export default function Portfolio() {
                                 Mainnet
                             </button>
                             <button
-                                onClick={() => setViewNetwork('sepolia')}
-                                className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm hover:cursor-pointer font-medium transition-all ${viewNetwork === 'sepolia'
+                                onClick={() => setViewNetwork('testnet')}
+                                className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm hover:cursor-pointer font-medium transition-all ${viewNetwork === 'testnet'
                                     ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/20'
                                     : 'text-gray-400 hover:text-gray-200'
                                     }`}
                             >
                                 <FlaskConical className="w-3.5 h-3.5 hover:cursor-pointer" />
-                                Sepolia
+                                Testnet
                             </button>
                         </div>
 
@@ -294,13 +292,13 @@ export default function Portfolio() {
                 )}
             </div>
 
-            {/* Bridge Section */}
+            {/* Swap Section */}
             <div className="space-y-4">
                 <div className="flex items-center gap-2">
-                    <div className="h-1 w-8 bg-orange-500 rounded-full"></div>
-                    <h2 className="text-xl font-bold text-white tracking-tight">Onboard Your Bitcoin</h2>
+                    <div className="h-1 w-8 bg-cyan-500 rounded-full"></div>
+                    <h2 className="text-xl font-bold text-white tracking-tight">Swap on Stellar DEX</h2>
                 </div>
-                <BitcoinBridge />
+                <StellarSwap />
             </div>
         </div>
     );

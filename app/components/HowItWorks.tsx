@@ -8,12 +8,12 @@ import BackgroundAnimation from './BackgroundAnimation';
 const steps = [
     {
         title: 'Connect Wallet',
-        description: 'Establish a secure connection with your Starknet wallet (Argent X or Braavos) to access the platform.',
+        description: 'Establish a secure connection with your Stellar wallet (Freighter, Lobstr, or Albedo) to access the platform.',
         icon: LinkIcon,
     },
     {
-        title: 'Bridge & Subscribe',
-        description: 'Move assets via our Bitcoin Bridge and select a tiered plan to unlock high-performance tracking.',
+        title: 'Swap & Subscribe',
+        description: 'Swap assets on the Stellar DEX and select a tiered plan to unlock premium features and tracking.',
         icon: Sparkles,
     },
     {
@@ -45,7 +45,7 @@ const HowItWorks = () => {
                         Seamless <span className="text-purple-500">Onboarding</span>
                     </h2>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto font-light">
-                        Getting started with Zeteo is simple. Follow these three steps to unlock your Starknet potential.
+                        Getting started with Zeteo is simple. Follow these three steps to unlock your Stellar potential.
                     </p>
                 </motion.div>
 

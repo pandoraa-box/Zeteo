@@ -8,16 +8,16 @@ const IS_PROD = process.env.NODE_ENV === 'production';
 // Curated airdrop opportunities (used for Tier 2 & 3)
 // These are real, well-known protocols with potential future airdrops
 const CURATED_AIRDROPS = [
-    { name: 'Starknet Odyssey', url: 'https://starknet.io', amount: '100-500 STRK', status: 'Potential' },
+    { name: 'Stellar Ecosystem Fund', url: 'https://stellar.org', amount: '100-500 XLM', status: 'Potential' },
+    { name: 'Soroban dApp Grant', url: 'https://soroban.stellar.org', amount: 'XLM tokens', status: 'Potential' },
     { name: 'LayerZero Airdrop', url: 'https://layerzero.network', amount: 'ZRO tokens', status: 'Potential' },
-    { name: 'zkSync Era Airdrop', url: 'https://zksync.io', amount: 'ZK tokens', status: 'Potential' },
-    { name: 'Scroll Airdrop', url: 'https://scroll.io', amount: 'SCR tokens', status: 'Potential' },
-    { name: 'Linea Airdrop', url: 'https://linea.build', amount: 'LINEA tokens', status: 'Potential' },
-    { name: 'Eigenlayer Restaking', url: 'https://eigenlayer.xyz', amount: 'EIGEN tokens', status: 'Claimable' },
-    { name: 'Etherfi Airdrop', url: 'https://ether.fi', amount: 'ETHFI tokens', status: 'Claimable' },
-    { name: 'Arbitrum Airdrop S2', url: 'https://arbitrum.io', amount: 'ARB tokens', status: 'Potential' },
-    { name: 'Base Ecosystem Grant', url: 'https://base.org', amount: 'TBD', status: 'Potential' },
-    { name: 'Optimism RetroPGF', url: 'https://optimism.io', amount: 'OP tokens', status: 'Potential' },
+    { name: 'LOBSTR Rewards', url: 'https://lobstr.co', amount: 'LOBSTR tokens', status: 'Potential' },
+    { name: 'Stellar DEX Rewards', url: 'https://stellar.org/dex', amount: 'XLM rewards', status: 'Potential' },
+    { name: 'DefiLlama on Stellar', url: 'https://defillama.com', amount: 'TBD', status: 'Potential' },
+    { name: 'Aquarius AMM', url: 'https://stellar.org/amm', amount: 'AQUA tokens', status: 'Claimable' },
+    { name: 'yXLM Staking', url: 'https://yvault.io', amount: 'yXLM tokens', status: 'Potential' },
+    { name: 'UltraStellar Yield', url: 'https://ultrastellar.com', amount: 'Yield rewards', status: 'Potential' },
+    { name: 'Stellar Pay Integration', url: 'https://stellar.org/pay', amount: 'XLM rewards', status: 'Potential' },
 ];
 
 /**
@@ -50,7 +50,7 @@ async function buildAirdropPayload(tier: number, expiryTimestamp: number) {
         airdrops: [
             {
                 name: 'Zeteo Milestone #1',
-                url: 'https://starknet.io/claim',
+                url: 'https://stellar.org/claim',
                 amount: '1000 ZET',
                 status: 'Claimable',
                 expiry: now + 30 * 24 * 60 * 60,

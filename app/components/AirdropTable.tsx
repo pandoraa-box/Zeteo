@@ -289,7 +289,7 @@ const AirdropTable = ({ airdrops }: AirdropTableProps) => {
         setTimeout(() => {
             setClaimStatus(prev => ({ ...prev, step: 'Generating Proof (Client-Side)...' }));
             setTimeout(() => {
-                setClaimStatus(prev => ({ ...prev, step: 'Verifying with Garaga on-chain...' }));
+                setClaimStatus(prev => ({ ...prev, step: 'Verifying with Soroban on-chain...' }));
                 setTimeout(() => {
                     setClaimStatus({
                         status: 'success',

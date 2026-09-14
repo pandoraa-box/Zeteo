@@ -5,7 +5,7 @@ import { Check, Star, Zap, Diamond, Shield, Lock, CheckCircle } from 'lucide-rea
 import clsx from 'clsx';
 import { useWallet } from '@/app/context/WalletContext';
 import { motion } from 'framer-motion';
-import { fetchStarkPrice } from '@/app/utils/price';
+import { fetchXlmPrice } from '@/app/utils/price';
 import { useRouter } from 'next/navigation';
 
 import BackgroundAnimation from './BackgroundAnimation';
@@ -44,28 +44,28 @@ const plans = [
 ];
 
 const Subscription = () => {
-    const { connectWallet, isConnected, account } = useWallet();
+    const { connectWallet, isConnected, walletAddress, signTransaction } = useWallet();
     const router = useRouter();
     const [statusState, setStatusState] = useState<{ tier: number; message: string } | null>(null);
     const [loadingTier, setLoadingTier] = useState<number | null>(null);
-    const [starkPrice, setStarkPrice] = useState<number | null>(null);
+    const [xlmPrice, setXlmPrice] = useState<number | null>(null);
     const [currentSubscription, setCurrentSubscription] = useState<{ tier: number; expiry: number } | null>(null);
     const [isPrivateMode, setIsPrivateMode] = useState(false);
 
     useEffect(() => {
         const loadPrice = async () => {
-            const price = await fetchStarkPrice();
-            setStarkPrice(price);
+            const price = await fetchXlmPrice();
+            setXlmPrice(price);
         };
         loadPrice();
     }, []);
 
     useEffect(() => {
         const loadSubscription = async () => {
-            if (isConnected && account?.address) {
+            if (isConnected && walletAddress) {
                 try {
                     const { getSubscription } = await import('@/app/lib/contract');
-                    const sub = await getSubscription(account.address);
+                    const sub = await getSubscription(walletAddress);
                     setCurrentSubscription(sub);
                 } catch (error) {
                     console.error('Failed to load subscription:', error);
@@ -75,7 +75,7 @@ const Subscription = () => {
             }
         };
         loadSubscription();
-    }, [isConnected, account?.address]);
+    }, [isConnected, walletAddress]);
 
     const handleSelect = async (_planName: string, tierIndex: number) => {
         if (!isConnected) {
@@ -83,8 +83,8 @@ const Subscription = () => {
             return;
         }
 
-        if (!account) {
-            setStatusState({ tier: tierIndex, message: 'No account connected' });
+        if (!walletAddress) {
+            setStatusState({ tier: tierIndex, message: 'No wallet connected' });
             return;
         }
 
@@ -96,17 +96,16 @@ const Subscription = () => {
 
             setStatusState({ tier: tierIndex, message: isPrivateMode ? 'Generating ZK-Proof...' : 'Waiting for wallet approval...' });
 
-            let result;
+            let txHash;
             if (isPrivateMode) {
-                // Mock ZK-Proof generation for demo
-                const mockProof = ['0x1', '0x2', '0x3'];
-                result = await subscribeWithProof(account, tierIndex + 1, mockProof);
+                const mockProof = [1, 2, 3];
+                txHash = await subscribeWithProof(walletAddress, tierIndex + 1, mockProof);
             } else {
-                result = await subscribeToTier(account, tierIndex + 1);
+                txHash = await subscribeToTier(walletAddress, tierIndex + 1);
             }
 
             setStatusState({ tier: tierIndex, message: 'Transaction submitted. Waiting for confirmation...' });
-            console.log('Transaction hash:', result.transaction_hash);
+            console.log('Transaction hash:', txHash);
 
             setStatusState({ tier: tierIndex, message: 'Success! Redirecting to dashboard...' });
             setTimeout(() => {
@@ -205,9 +204,9 @@ const Subscription = () => {
                                             <span className="text-4xl font-bold text-white">{plan.price}</span>
                                             <span className="text-sm text-gray-600 uppercase font-mono">{plan.duration}</span>
                                         </div>
-                                        {starkPrice && (
+                                        {xlmPrice && (
                                             <div className="text-sm text-purple-400 font-mono mt-1">
-                                                {(parseInt(plan.price) / starkPrice).toFixed(2)} STRK
+                                                {(parseInt(plan.price) / xlmPrice).toFixed(2)} XLM
                                             </div>
                                         )}
                                     </div>

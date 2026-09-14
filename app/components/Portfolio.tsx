@@ -25,9 +25,7 @@ export default function Portfolio() {
             try {
                 const tokens = TOKENS[network] || [];
                 const results = await fetchTokenBalances(walletAddress, tokens, network);
-                // Filter out WBTC for the dashboard view as requested
-                const filteredResults = results.filter(token => token.symbol !== 'WBTC');
-                setBalances(filteredResults as TokenBalance[]);
+                setBalances(results as TokenBalance[]);
             } catch (error) {
                 console.error('Error fetching balances:', error);
             } finally {
